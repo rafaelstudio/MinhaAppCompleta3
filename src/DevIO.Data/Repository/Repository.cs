@@ -67,10 +67,6 @@ namespace DevIO.Data.Repository
             Db?.Dispose();
         }
 
-        Task<TEntity> IRepository<TEntity>.ObterTodos()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
     

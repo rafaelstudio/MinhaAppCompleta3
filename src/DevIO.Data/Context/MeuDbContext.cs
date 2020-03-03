@@ -19,7 +19,7 @@ namespace DevIO.Data.Context
         public DbSet<Fornecedor> Fornecedors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        {            
             
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(MeuDbContext).Assembly);

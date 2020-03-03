@@ -13,7 +13,7 @@ namespace DevIO.Business.Interfaces
 
         Task<TEntity> ObterPorId(Guid id);
 
-        Task<TEntity> ObterTodos();
+        Task <List<TEntity>> ObterTodos();
 
         Task Atualizar(TEntity entity);
 

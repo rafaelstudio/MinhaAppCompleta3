@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using DevIO.Data.Context;
 using DevIO.Business.Interfaces;
 using DevIO.Data.Repository;
+using AutoMapper;
 
 namespace DevIO.app
 {
@@ -43,6 +44,10 @@ namespace DevIO.app
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
 
             services.AddScoped<MeuDbContext>();
             services.AddScoped<IProdutoRepository, ProdutoRepository>();
