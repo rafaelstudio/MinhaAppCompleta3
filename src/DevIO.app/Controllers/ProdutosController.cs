@@ -2,9 +2,11 @@
 using DevIO.app.ViewModels;
 using DevIO.Business.Interfaces;
 using DevIO.Business.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DevIO.app.Controllers
@@ -64,9 +66,16 @@ namespace DevIO.app.Controllers
             produtoViewModel = await PopularFornecedores(produtoViewModel);
             if (!ModelState.IsValid) return View(produtoViewModel);
 
+            var imgPrefixo = Guid.NewGuid() + "_";
+            if (!await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
+            {
+                return View(produtoViewModel);
+            }
+
+            produtoViewModel.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
             await _produtoRepository.Adicionar(_mapper.Map<Produto>(produtoViewModel));
 
-            return View(produtoViewModel);
+            return RedirectToAction("Index");
         }
 
         // GET: Produtos/Edit/5
@@ -91,9 +100,28 @@ namespace DevIO.app.Controllers
         {
             if (id != produtoViewModel.Id) return NotFound();
 
+            var produtoAtualizacao = await ObterProduto(id);
+            produtoViewModel.Fornecedor = produtoAtualizacao.Fornecedor;
+            produtoViewModel.Imagem = produtoAtualizacao.Imagem;
             if (!ModelState.IsValid) return View(produtoViewModel);
 
-            await _produtoRepository.Atualizar(_mapper.Map<Produto>(produtoViewModel));            
+            if(produtoViewModel.ImagemUpload != null)
+            {
+                var imgPrefixo = Guid.NewGuid() + "_";
+                if(!await UploadArquivo(produtoViewModel.ImagemUpload, imgPrefixo))
+                {
+                    return View(produtoViewModel);
+                }
+
+                produtoAtualizacao.Imagem = imgPrefixo + produtoViewModel.ImagemUpload.FileName;
+            }
+
+            produtoAtualizacao.Nome      = produtoViewModel.Nome;
+            produtoAtualizacao.Descricao = produtoViewModel.Descricao;
+            produtoAtualizacao.Valor     = produtoViewModel.Valor;
+            produtoAtualizacao.Ativo     = produtoViewModel.Ativo;  
+
+            await _produtoRepository.Atualizar(_mapper.Map<Produto>(produtoAtualizacao));            
                
                 return RedirectToAction("Index");            
            
@@ -142,6 +170,26 @@ namespace DevIO.app.Controllers
             produto.Fornecedores = _mapper.Map<IEnumerable<FornecedorViewModel>>
                                     (await _fornecedorRepository.ObterTodos());
             return produto;
+        }
+
+
+        private async Task<bool> UploadArquivo(IFormFile arquivo, string imgPrefixo)
+        {
+            if (arquivo.Length <= 0) return false;
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens", imgPrefixo + arquivo.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Ja existe um arquivo com este nome!");
+                return false;
+            }
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await arquivo.CopyToAsync(stream);
+            }
+
+            return true;
         }
 
 

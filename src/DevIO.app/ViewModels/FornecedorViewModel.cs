@@ -13,11 +13,11 @@ namespace DevIO.app.ViewModels
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é Obrigatorio")]
-        [StringLength(100, ErrorMessage = "O campo {} precisa ter entre {2} e {1} caracteres", MinimumLength = 3)]
+        [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 3)]
         public string Nome { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é Obrigatorio")]
-        [StringLength(100, ErrorMessage = "O campo {} precisa ter entre {2} e {1} caracteres", MinimumLength = 3)]
+        [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 3)]
         public string Documento { get; set; }
 
         [DisplayName("Tipo")]
