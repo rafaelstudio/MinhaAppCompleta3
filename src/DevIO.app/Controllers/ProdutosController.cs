@@ -119,7 +119,7 @@ namespace DevIO.app.Controllers
             produtoAtualizacao.Nome      = produtoViewModel.Nome;
             produtoAtualizacao.Descricao = produtoViewModel.Descricao;
             produtoAtualizacao.Valor     = produtoViewModel.Valor;
-            produtoAtualizacao.Ativo     = produtoViewModel.Ativo;  
+            produtoAtualizacao.Ativo         = produtoViewModel.Ativo;  
 
             await _produtoRepository.Atualizar(_mapper.Map<Produto>(produtoAtualizacao));            
                
